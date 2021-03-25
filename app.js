@@ -33,10 +33,13 @@ const staffRouter = require('./routes/staff')
 const shopRouter = require('./routes/shop')
 const userRouter = require('./routes/users')
 
+//require middleware
+const errorHandler = require('./middleware/errorHandler')
+
 app.use('/', indexRouter)
 app.use('/company', companyRouter)
 app.use('/staff', staffRouter)
 app.use('/shop', shopRouter)
 app.use('/users', userRouter)
-
+app.use(errorHandler)  //ใส่บันทัดล่างก่อน รอง module.express = app  มาจาก next(error)
 module.exports = app
