@@ -5,6 +5,8 @@ const logger = require('morgan') //  instance module morgan
 const { MONGODB_URL } = require('./config/index')
 const passport = require('passport')
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+
 
 const passportJWT = require('./middleware/passportJWT')  //passby jwt
 // connect mongoose
@@ -17,7 +19,21 @@ mongoose.connect(MONGODB_URL, {
 }) // method  mongoose ใช้ connect กับ database
 
 const app = express()
-app.use(helmet());
+app.use(helmet());  //เกี่ยวกับ security
+
+
+//####เกี่ยวกับ จำกัด request####
+// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+// see https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 1);  //ถ้าใช้พวก reverse poxy เช่น heroku AWS
+
+const limiter = rateLimit({
+    windowMs: 10* 1000, // 10sec  minutes
+    max: 5 // limit each IP to 100 requests per windowMs
+  });
+
+app.use(limiter);  
+
 
 //init passport
 app.use(passport.initialize())
