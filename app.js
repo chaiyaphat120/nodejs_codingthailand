@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser') //  instance module cookie-parser
 const logger = require('morgan') //  instance module morgan
 const { MONGODB_URL } = require('./config/index')
 const passport = require('passport')
+const helmet = require("helmet");
 
 const passportJWT = require('./middleware/passportJWT')  //passby jwt
 // connect mongoose
@@ -16,6 +17,7 @@ mongoose.connect(MONGODB_URL, {
 }) // method  mongoose ใช้ connect กับ database
 
 const app = express()
+app.use(helmet());
 
 //init passport
 app.use(passport.initialize())
