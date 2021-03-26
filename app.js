@@ -6,21 +6,15 @@ const { MONGODB_URL } = require('./config/index')
 const passport = require('passport')
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-
+const {mongoose} = require('./config/mongoDb')
 
 const passportJWT = require('./middleware/passportJWT')  //passby jwt
-// connect mongoose
-const mongoose = require('mongoose') // instance module  mongoose
-mongoose.connect(MONGODB_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true, //ไว้ปิด warnning เวลาใชเคำสั่งเก่าๆ
-    useCreateIndex: true,
-    useFindAndModify: false, //ไม่ให้แจ้งเตือน เวลาใช้ findOneAndDelete()  findOneAndUpdate()
-}) // method  mongoose ใช้ connect กับ database
+
 
 const app = express()
 app.use(helmet());  //เกี่ยวกับ security
-
+// connect mongoDB
+mongoose
 
 //####เกี่ยวกับ จำกัด request####
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)

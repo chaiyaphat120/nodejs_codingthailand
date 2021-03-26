@@ -2,7 +2,7 @@ const Shop = require('../../Models/shop')
 const Menu = require('../../Models/menu')
 const saveImageToDisk = require('../../utils/upLoadImagTodisk')
 // const { cloudinary } = require('../../utils/cloundinary')
-const { cloudinary } = require('../../config/index')
+const { cloudinary } = require('../../config/cloudinary')
 exports.index = async (req, res, next) => {
     try {
         const shops = await Shop.find().select('name photo location').sort({ id: -1 })
