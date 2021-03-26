@@ -5,7 +5,7 @@ const { JWT_SECRET } = require('../config/index')
 //validationResult ไว้รับ error จากไฟล์ router / user
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, role } = req.body
 
         //validation
         const errors = validationResult(req)
@@ -28,6 +28,7 @@ exports.register = async (req, res, next) => {
         user.name = name
         user.password = await user.encryptPassword(password) //ใช้ function เขียนใน schema เลย
         user.email = email
+        user.role = role
 
         await user.save()
         res.status(200).json({
@@ -58,21 +59,35 @@ exports.login = async (req, res, next) => {
             throw error
         }
         //สร้าง token //check แค่ verify ผ่าน
-        console.log( { id: user._id, role: user.role })
+        console.log({ id: user._id, role: user.role })
         const payload = { id: user._id, role: user.role }
         //https://www.grc.com/passwords.htm  ไว้ gen secrete
-        const token = await jwt.sign( { id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '2 min' })
-        console.log("2")
+        const token = await jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '50 min' })
+        console.log('2')
         //decode วันหมดอายุ
         const expires_in = jwt.decode(token)
 
         res.status(200).json({
             access_token: token,
             expires_in: expires_in.exp,
-            token_type: "Bearer"
+            token_type: 'Bearer',
         })
     } catch (error) {
         console.log(error)
         next(error)
     }
+}
+
+exports.me = async (req, res, next) => {
+    try {
+        const { _id, name, email, role } = req.user
+        res.status(200).json({
+            user: {
+                _id,
+                name,
+                email,
+                role,
+            },
+        })
+    } catch (error) {}
 }

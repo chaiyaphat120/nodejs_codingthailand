@@ -1,5 +1,6 @@
 const { json } = require("express")
-const Staff = require("../Models/staff").default
+const Staff = require("../Models/staff")
+
 
 exports.findV1 = async (req, res, next) => {
     Staff.find()

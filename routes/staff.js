@@ -1,5 +1,7 @@
 const express = require("express")
 const router = express.Router()
+const passportJWT = require('../middleware/passportJWT')  //passby jwt
+
 const staffController = require("../controllers/staffController")
 const staffControllerForAdd = require("../controllers/staffControllerForAdd")
 const staffControllerForDelete = require("../controllers/staffControllerForDelete")
@@ -7,7 +9,7 @@ const staffControllerForPUT = require("../controllers/staffControllerForPUT")
 const staffControllerForPATCH = require("../controllers/staffControllerForPATCH")
 
 /* GET users listing. */
-router.get("/v1", staffController.findV1)
+router.get("/v1",[passportJWT.isLogin], staffController.findV1)
 router.get("/v2", staffController.findV2)
 
 //insert or add data

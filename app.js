@@ -3,7 +3,9 @@ const path = require('path') //  instance module path
 const cookieParser = require('cookie-parser') //  instance module cookie-parser
 const logger = require('morgan') //  instance module morgan
 const { MONGODB_URL } = require('./config/index')
+const passport = require('passport')
 
+const passportJWT = require('./middleware/passportJWT')  //passby jwt
 // connect mongoose
 const mongoose = require('mongoose') // instance module  mongoose
 mongoose.connect(MONGODB_URL, {
@@ -14,6 +16,10 @@ mongoose.connect(MONGODB_URL, {
 }) // method  mongoose ใช้ connect กับ database
 
 const app = express()
+
+//init passport
+app.use(passport.initialize())
+
 
 // ในตัวแปร express ซึ่งเป็น instance module จะมี Method ทั้งหมด 4 Method ได้แก่
 // express.Router()  // สร้าง router object
@@ -27,6 +33,8 @@ app.use(express.urlencoded({ extended: false })) // express.urlencoded() // แ�
 app.use(cookieParser()) // เราลง middleware cookieParser() เอาไว้สำหรับอ่าน header cookie ไม่อย่างนั้นมันจะหาไม่เจอและพังตลอดนั่นเอง
 app.use(express.static(path.join(__dirname, 'public'))) // express.static() // เรียกใช้งาน static file เช่น ไฟล์รูปภาพ ไฟล์ js ไฟล์ css เป็นต้น
 
+
+
 const indexRouter = require('./routes/index')
 const companyRouter = require('./routes/company')
 const staffRouter = require('./routes/staff')
@@ -38,7 +46,7 @@ const errorHandler = require('./middleware/errorHandler')
 
 app.use('/', indexRouter)
 app.use('/company', companyRouter)
-app.use('/staff', staffRouter)
+app.use('/staff',[passportJWT.isLogin], staffRouter)   //[passportJWT.isLogin] ป้องกันทั้ง route เลย
 app.use('/shop', shopRouter)
 app.use('/users', userRouter)
 app.use(errorHandler)  //ใส่บันทัดล่างก่อน รอง module.express = app  มาจาก next(error)
